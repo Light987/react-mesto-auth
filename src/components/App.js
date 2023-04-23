@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from "react";
+import React, {useState, useEffect} from "react";
 import Main from './Main'
 import Footer from "./Footer"
 import ImagePopup from "./ImagePopup"
@@ -14,12 +14,12 @@ import auth from "../utils/auth";
 import Login from "./Login";
 import Register from "./Register";
 import PopupDeleteCard from "./PopupDeleteCard";
+import Header from "./Header";
 
 function App() {
     const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
     const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
     const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
     const [selectedCard, setSelectedCard] = useState({});
     const [currentUser, setCurrentUser] = useState({});
     const [cards, setCards] = useState([]);
@@ -27,15 +27,16 @@ function App() {
     const [isPopupDeleteCardOpen, setIsPopupDeleteCardOpen] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
     const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
-    const [isInfoTooltipMessage, setIsInfoTooltipMessage] = useState("");
-    const [isRegistrationSuccess, setIsRegistrationSuccess] = useState(false);
+    const [infoTooltipMessage, setInfoTooltipMessage] = useState("");
+    const [isSuccessTooltipStatus, setIsSuccessTooltipStatus] = useState(false);
     const [email, setEmail] = useState("");
     const [deletedCard, setDeletedCard] = useState({});
     const navigate = useNavigate();
 
-    const tokenCheck = useCallback(() => {
+
+    useEffect(() => {
         const token = localStorage.getItem("token");
-        if (token && !loggedIn) {
+        if (token && !loggedIn)
             auth.checkToken(token)
                 .then((res) => {
                     if (res) {
@@ -45,17 +46,14 @@ function App() {
                     }
                 })
                 .catch((err) => console.log(err));
-        }
     }, [loggedIn, navigate]);
 
     useEffect(() => {
-        setIsLoading(false)
-        tokenCheck();
         if (loggedIn) {
             Promise.all([api.getUserInfo(), api.getAllCards()])
-                .then(([profileInfo, data]) => {
+                .then(([profileInfo, cards]) => {
                     setCurrentUser(profileInfo);
-                    setCards(data.map((card) => ({
+                    setCards(cards.map((card) => ({
                         _id: card._id,
                         name: card.name,
                         link: card.link,
@@ -65,7 +63,7 @@ function App() {
                 })
                 .catch((err) => console.log(err));
         }
-    }, [loggedIn, tokenCheck]);
+    }, [loggedIn]);
 
 
     function handleLogin(userData) {
@@ -80,8 +78,8 @@ function App() {
             })
             .catch((err) => {
                 console.log(err);
-                setIsRegistrationSuccess(false);
-                handleSignup("Что-то пошло не так! Попробуйте еще раз.");
+                setIsSuccessTooltipStatus(false);
+                openInfoTooltip("Что-то пошло не так! Попробуйте еще раз.");
             });
     }
 
@@ -89,24 +87,24 @@ function App() {
         auth.register(regUserData)
             .then(() => {
                 navigate("/sign-in", {replace: true});
-                setIsRegistrationSuccess(true);
-                handleSignup("Вы успешно зарегистрировались!");
+                setIsSuccessTooltipStatus(true);
+                openInfoTooltip("Вы успешно зарегистрировались!");
             })
             .catch((err) => {
                 console.log(err);
-                setIsRegistrationSuccess(false);
-                handleSignup("Что-то пошло не так! Попробуйте еще раз.");
+                setIsSuccessTooltipStatus(false);
+                openInfoTooltip("Что-то пошло не так! Попробуйте еще раз.");
             });
     }
 
 
-    function handleSignup(message) {
-        setIsInfoTooltipMessage(message);
-        setIsInfoTooltipOpen(true);
+    function openInfoTooltip(message) {
+        setInfoTooltipMessage(message);
+        setIsSuccessTooltipStatus(true);
     }
 
 
-    function handleSignout() {
+    function handleSignOut() {
         setLoggedIn(false);
         localStorage.removeItem("token");
         navigate("/sign-in", {replace: true});
@@ -136,7 +134,6 @@ function App() {
     }
 
     function handleCardDelete(card) {
-        setIsLoading(true);
         api.deleteCard(card._id)
             .then(() => {
                     setCards((state) => state.filter((item) => item._id !== card._id));
@@ -147,29 +144,24 @@ function App() {
     }
 
     function handleUpdateUser(newUserInfo) {
-        setIsLoading(true);
         api.patchUserInfo(newUserInfo)
             .then((data) => {
                 setCurrentUser(data);
                 closeAllPopups();
             })
-            .catch((err) => console.log(err))
-            .finally(() => setIsLoading(false));
+            .catch((err) => console.log(err));
     }
 
     function handleUpdateAvatar(newAvatar) {
-        setIsLoading(true);
         api.changeAvatar(newAvatar)
             .then((data) => {
                 setCurrentUser(data);
                 closeAllPopups();
             })
             .catch((err) => console.log(err))
-            .finally(() => setIsLoading(false));
     }
 
     function handleAddPlace(data) {
-        setIsLoading(true);
 
         api.postCard(data)
             .then((newCard) => {
@@ -177,11 +169,20 @@ function App() {
                 closeAllPopups();
             })
             .catch((err) => console.log(err))
-            .finally(() => setIsLoading(false));
+    }
+
+    function handleDeleteCard(card) {
+        setIsPopupDeleteCardOpen(true)
+        setDeletedCard(card);
     }
 
     return (
         <CurrentUserContext.Provider value={currentUser}>
+            <Header
+                onSignout={handleSignOut}
+                email={email}
+                isLoggedIn={loggedIn}
+            />
             <Routes>
                 <Route
                     path="/"
@@ -220,13 +221,17 @@ function App() {
                             onPopupDeleteCard={setIsPopupDeleteCardOpen}
                             onCardClick={setSelectedCard}
                             onCardLike={handleCardLike}
-                            onDeletedCard={setDeletedCard}
+                            onDeletedCard={handleDeleteCard}
                             cards={cards}
                             loggedIn={loggedIn}
                             email={email}
-                            onSignout={handleSignout}
+                            onSignout={handleSignOut}
                         />
                     }
+                />
+                <Route
+                    path='/*'
+                    element={loggedIn ? <Navigate to='/' replace/> : <Navigate to='/sign-in' replace/>}
                 />
             </Routes>
 
@@ -240,33 +245,29 @@ function App() {
                 onUpdateUser={handleUpdateUser}
                 isOpened={isEditProfilePopupOpen}
                 onClose={closeAllPopups}
-                onLoading={isLoading}
             />
             <EditAvatarPopup
                 onUpdateAvatar={handleUpdateAvatar}
                 isOpened={isEditAvatarPopupOpen}
                 onClose={closeAllPopups}
-                onLoading={isLoading}
             />
             <AddPlacePopup
                 onAddPlace={handleAddPlace}
                 onClose={closeAllPopups}
                 isOpened={isAddPlacePopupOpen}
-                onLoading={isLoading}
             />
 
             <PopupDeleteCard
                 onClose={closeAllPopups}
                 isOpened={isPopupDeleteCardOpen}
                 onCardDelete={handleCardDelete}
-                onLoading={isLoading}
                 card={deletedCard}
             />
 
             <InfoTooltip
                 isOpen={isInfoTooltipOpen}
-                message={isInfoTooltipMessage}
-                isSuccess={isRegistrationSuccess}
+                message={infoTooltipMessage}
+                isSuccess={isSuccessTooltipStatus}
                 onClose={closeAllPopups}
             />
         </CurrentUserContext.Provider>

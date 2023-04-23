@@ -8,12 +8,6 @@ function Main(props) {
 
     return (
         <>
-            <Header
-                buttonText="Выйти"
-                buttonLink="/sign-in"
-                onSignout={props.onSignout}
-                email={props.email}
-            />
             <main className="main">
                 <section className="profile">
                     <div className="profile__avatar">

@@ -10,6 +10,8 @@
 
 @media screen and (max-width: 580px) {
     .header {
-        margin: 28px 27px 29px;
+        margin: 0;
+        padding-bottom: 32px;
+        flex-direction: column-reverse;
     }
 }

@@ -24,7 +24,6 @@ const Login = (props) => {
 
     return (
         <>
-            <Header buttonText="Регистрация" buttonLink="/sign-up"/>
             <section className="authentication-form">
                 <h2 className="authentication-form__title">{props.title}</h2>
                 <form onSubmit={handleSubmit}>
