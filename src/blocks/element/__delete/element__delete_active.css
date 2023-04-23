@@ -1,0 +1,5 @@
+.element__delete_active {
+    display: flex;
+    visibility: visible;
+    opacity: 1;
+}

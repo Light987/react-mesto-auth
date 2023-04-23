@@ -1,0 +1,13 @@
+.popup-delete__close-button {
+    position: absolute;
+    right: -40px;
+    top: -40px;
+}
+
+
+@media screen and (max-width: 580px) {
+    .popup-delete__close-button {
+        top: -28px;
+        right: 0;
+    }
+}

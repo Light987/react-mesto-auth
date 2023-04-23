@@ -1,0 +1,5 @@
+.element__lower-part {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
