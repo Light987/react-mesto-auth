@@ -1,0 +1,13 @@
+.header__nav-link_medium {
+    font-weight: 500;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 580px) {
+    .header__nav-link_medium {
+        margin: 40px 0 18px;
+    }
+}

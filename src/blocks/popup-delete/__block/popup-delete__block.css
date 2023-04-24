@@ -1,0 +1,14 @@
+.popup-delete__block {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    min-width: 430px;
+    box-sizing: border-box;
+    right: -16px;
+    flex-direction: column;
+    background-color: #fff;
+    background-size: cover;
+    border-radius: 10px;
+    z-index: 2;
+    padding: 34px 36px 36px;
+}

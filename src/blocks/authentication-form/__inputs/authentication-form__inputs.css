@@ -1,0 +1,15 @@
+.authentication-form__inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-bottom: 216px;
+    background-color: black;
+}
+
+@media screen and (max-width: 767px) {
+    .authentication-form__inputs {
+        margin-bottom: 170px;
+        max-width: 282px;
+        padding: 25px 0 0;
+    }
+}
