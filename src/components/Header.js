@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 
 function Header(props) {
   const { pathname } = useLocation();
-  console.log(pathname === "/sign-in");
+
   return (
     <header className="header">
       <img className="header__logo" src={logo} alt="Место Россия" />
