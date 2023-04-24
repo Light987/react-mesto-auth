@@ -1,18 +1,15 @@
 import PopupWithForm from "./PopupWithForm";
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 
 function EditAvatarPopup(props) {
     const avatarRef = React.useRef(null);
-    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         avatarRef.current.value = "";
-        setIsLoading(false);
     }, [props.isOpened]);
 
     function handleSubmit(e) {
         e.preventDefault();
-        setIsLoading(true)
 
         props.onUpdateAvatar({
             avatar: avatarRef.current.value,
@@ -30,7 +27,7 @@ function EditAvatarPopup(props) {
             title="Обновить аватар"
             isOpened={props.isOpened}
             onClose={props.onClose}
-            buttonText={isLoading ? "Обновление..." : "Обновить"}>
+            buttonText={props.buttonText}>
             <input
                 ref={avatarRef}
                 autoComplete="off"

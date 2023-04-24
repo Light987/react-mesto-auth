@@ -4,17 +4,14 @@ import React, {useState, useEffect} from "react";
 function AddPlacePopup(props) {
     const [placeName, setPlaceName] = useState('');
     const [placeLink, setPlaceLink] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         setPlaceName('');
         setPlaceLink('');
-        setIsLoading(false);
     }, [props.isOpened]);
 
     function handleSubmit(e) {
         e.preventDefault();
-        setIsLoading(true)
 
         props.onAddPlace({
             name: placeName,
@@ -38,7 +35,7 @@ function AddPlacePopup(props) {
             title="Новое место"
             isOpened={props.isOpened}
             onClose={props.onClose}
-            buttonText={isLoading ? `Сохранение` : `Создать`}>
+            buttonText={props.buttonText}>
             <input
                 value={placeName}
                 autoComplete="off"

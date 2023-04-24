@@ -6,17 +6,14 @@ function EditProfilePopup(props) {
     const currentUser = React.useContext(CurrentUserContext);
     const [about, setAbout] = useState("");
     const [name, setName] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         setName(currentUser.name);
         setAbout(currentUser.about);
-        setIsLoading(false);
     }, [currentUser, props.isOpened]);
 
     function handleSubmit(e) {
         e.preventDefault();
-        setIsLoading(true)
 
         props.onUpdateUser({
             name: name,
@@ -37,7 +34,7 @@ function EditProfilePopup(props) {
             onSubmit={handleSubmit}
             isOpened={props.isOpened}
             onClose={props.onClose}
-            buttonText={isLoading ? "Сохранение..." : "Сохранить"}
+            buttonText={props.buttonText}
             name="profile-popup"
             title="Редактировать профиль">
             <input

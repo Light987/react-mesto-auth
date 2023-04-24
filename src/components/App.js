@@ -33,10 +33,15 @@ function App() {
     const [deletedCard, setDeletedCard] = useState({});
     const navigate = useNavigate();
 
+    const [isAddPlaceLoading, setIsAddPlaceLoading] = useState(false);
+    const [isEditAvatarLoading, setIsEditAvatarLoading] = useState(false);
+    const [isEditProfileLoading, setIsEditProfileLoading] = useState(false);
+    const [isDeleteCardLoading, setIsDeleteCardLoading] = useState(false);
+
 
     useEffect(() => {
         const token = localStorage.getItem("token");
-        if (token && !loggedIn)
+        if (token)
             auth.checkToken(token)
                 .then((res) => {
                     if (res) {
@@ -46,7 +51,7 @@ function App() {
                     }
                 })
                 .catch((err) => console.log(err));
-    }, [loggedIn, navigate]);
+    }, [navigate]);
 
     useEffect(() => {
         if (loggedIn) {
@@ -98,9 +103,10 @@ function App() {
     }
 
 
-    function openInfoTooltip(message) {
+    function openInfoTooltip(message, isSuccess) {
         setInfoTooltipMessage(message);
-        setIsSuccessTooltipStatus(true);
+        setIsSuccessTooltipStatus(isSuccess);
+        setIsInfoTooltipOpen(true);
     }
 
 
@@ -134,41 +140,50 @@ function App() {
     }
 
     function handleCardDelete(card) {
+        setIsDeleteCardLoading(true);
         api.deleteCard(card._id)
             .then(() => {
                     setCards((state) => state.filter((item) => item._id !== card._id));
                     closeAllPopups();
                 }
             )
-            .catch((err) => console.log(err));
+            .catch((err) => console.log(err))
+            .finally(() => setIsDeleteCardLoading(false))
     }
 
     function handleUpdateUser(newUserInfo) {
+        setIsEditProfileLoading(true)
+
         api.patchUserInfo(newUserInfo)
             .then((data) => {
                 setCurrentUser(data);
                 closeAllPopups();
             })
-            .catch((err) => console.log(err));
+            .catch((err) => console.log(err))
+            .finally(() => setIsEditProfileLoading(false));
     }
 
     function handleUpdateAvatar(newAvatar) {
+        setIsEditAvatarLoading(true)
+
         api.changeAvatar(newAvatar)
             .then((data) => {
                 setCurrentUser(data);
                 closeAllPopups();
             })
             .catch((err) => console.log(err))
+            .finally(() => setIsEditAvatarLoading(false))
     }
 
     function handleAddPlace(data) {
-
+        setIsAddPlaceLoading(true)
         api.postCard(data)
             .then((newCard) => {
                 setCards([newCard, ...cards]);
                 closeAllPopups();
             })
             .catch((err) => console.log(err))
+            .finally(() => setIsAddPlaceLoading(false))
     }
 
     function handleDeleteCard(card) {
@@ -245,16 +260,19 @@ function App() {
                 onUpdateUser={handleUpdateUser}
                 isOpened={isEditProfilePopupOpen}
                 onClose={closeAllPopups}
+                buttonText={isEditProfileLoading ? "Сохранение..." : "Сохранить"}
             />
             <EditAvatarPopup
                 onUpdateAvatar={handleUpdateAvatar}
                 isOpened={isEditAvatarPopupOpen}
                 onClose={closeAllPopups}
+                buttonText={isEditAvatarLoading ? "Обновление..." : "Обновить"}
             />
             <AddPlacePopup
                 onAddPlace={handleAddPlace}
                 onClose={closeAllPopups}
                 isOpened={isAddPlacePopupOpen}
+                buttonText={isAddPlaceLoading ? "Создание..." : "Создать"}
             />
 
             <PopupDeleteCard
@@ -262,6 +280,7 @@ function App() {
                 isOpened={isPopupDeleteCardOpen}
                 onCardDelete={handleCardDelete}
                 card={deletedCard}
+                buttonText={isDeleteCardLoading ? "Удаление..." : "Да"}
             />
 
             <InfoTooltip
