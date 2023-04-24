@@ -9,6 +9,7 @@ function AddPlacePopup(props) {
     useEffect(() => {
         setPlaceName('');
         setPlaceLink('');
+        setIsLoading(false);
     }, [props.isOpened]);
 
     function handleSubmit(e) {

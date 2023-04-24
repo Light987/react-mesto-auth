@@ -7,6 +7,7 @@ function EditAvatarPopup(props) {
 
     useEffect(() => {
         avatarRef.current.value = "";
+        setIsLoading(false);
     }, [props.isOpened]);
 
     function handleSubmit(e) {
