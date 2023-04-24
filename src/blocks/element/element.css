@@ -1,9 +1,0 @@
-.element {
-    position: relative;
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-between;
-    background-color: #fff;
-    border-radius: 10px;
-    overflow: hidden;
-}
