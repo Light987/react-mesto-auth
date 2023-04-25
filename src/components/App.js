@@ -85,8 +85,7 @@ function App() {
       })
       .catch((err) => {
         console.log(err);
-        setIsSuccessTooltipStatus(false);
-        openInfoTooltip("Что-то пошло не так! Попробуйте еще раз.");
+        openInfoTooltip("Что-то пошло не так! Попробуйте еще раз.", false);
       });
   }
 
@@ -95,13 +94,11 @@ function App() {
       .register(regUserData)
       .then(() => {
         navigate("/sign-in", { replace: true });
-        setIsSuccessTooltipStatus(true);
-        openInfoTooltip("Вы успешно зарегистрировались!");
+        openInfoTooltip("Вы успешно зарегистрировались!", true);
       })
       .catch((err) => {
         console.log(err);
-        setIsSuccessTooltipStatus(false);
-        openInfoTooltip("Что-то пошло не так! Попробуйте еще раз.");
+        openInfoTooltip("Что-то пошло не так! Попробуйте еще раз.", false);
       });
   }
 
